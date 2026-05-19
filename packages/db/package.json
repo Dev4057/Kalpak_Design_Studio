@@ -1,0 +1,31 @@
+{
+  "name": "@kalpak/db",
+  "version": "0.1.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "dev": "tsc --watch",
+    "db:migrate": "node -e \"console.log('Run migrations via Supabase CLI: supabase db push')\"",
+    "db:types": "supabase gen types typescript --project-id vdujrflruolueslwnjpb > src/types/database.types.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.47.10"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/pg": "^8.20.0",
+    "dotenv": "^16.4.7",
+    "pg": "^8.21.0",
+    "typescript": "^5.7.2"
+  }
+}
