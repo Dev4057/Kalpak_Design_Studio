@@ -9,6 +9,9 @@ import {
   Users,
   Building2,
   LogOut,
+  BarChart3,
+  BookOpen,
+  UserCog,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -21,6 +24,9 @@ const navItems = [
   { href: '/workers', label: 'Workers', icon: HardHat },
   { href: '/leads', label: 'Leads', icon: Users, partnerOnly: true },
   { href: '/clients', label: 'Clients', icon: Building2 },
+  { href: '/team', label: 'Team', icon: UserCog, partnerOnly: true },
+  { href: '/reports', label: 'Reports', icon: BarChart3, partnerOnly: true },
+  { href: '/blog', label: 'Blog', icon: BookOpen, partnerOnly: true },
 ]
 
 export function Sidebar({ onClose }: { onClose?: () => void }) {

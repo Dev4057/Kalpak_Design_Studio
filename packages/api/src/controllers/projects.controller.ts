@@ -77,6 +77,15 @@ export async function updateProject(req: Request, res: Response, next: NextFunct
       .single()
 
     if (error || !data) throw new AppError(404, 'NOT_FOUND', 'Project not found')
+
+    // Trigger portfolio revalidation when publish state changes
+    if (typeof input.is_published === 'boolean' && process.env.WEB_URL && process.env.REVALIDATE_SECRET) {
+      fetch(`${process.env.WEB_URL}/api/revalidate`, {
+        method: 'POST',
+        headers: { 'x-revalidate-secret': process.env.REVALIDATE_SECRET },
+      }).catch(() => null)
+    }
+
     res.json({ data })
   } catch (err) {
     next(err)

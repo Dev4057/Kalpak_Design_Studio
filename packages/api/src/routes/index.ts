@@ -10,6 +10,11 @@ import leadsRouter from './leads.routes.js'
 import * as workersController from '../controllers/workers.controller.js'
 import * as updatesController from '../controllers/updates.controller.js'
 import * as documentsController from '../controllers/documents.controller.js'
+import * as paymentsController from '../controllers/payments.controller.js'
+import * as reportsController from '../controllers/reports.controller.js'
+import * as dashboardController from '../controllers/dashboard.controller.js'
+import * as blogController from '../controllers/blog.controller.js'
+import teamRouter from './team.routes.js'
 
 export function mountRoutes(app: Express): void {
   app.use('/api/auth', authRouter)
@@ -35,6 +40,24 @@ export function mountRoutes(app: Express): void {
   app.use('/api/clients', clientsRouter)
   app.use('/api/leads', leadsRouter)
 
+  // Payment delete routes (standalone, no project context)
+  app.delete('/api/payments/workers/:paymentId', authenticate, paymentsController.deleteWorkerPayment)
+  app.delete('/api/payments/vendors/:paymentId', authenticate, paymentsController.deleteVendorPayment)
+
   // Document delete (no project context needed, doc ID is enough)
   app.delete('/api/documents/:id', authenticate, documentsController.deleteDocument)
+
+  // Dashboard + Reports (partner only, enforced in controller)
+  app.get('/api/dashboard', authenticate, dashboardController.getDashboard)
+  app.get('/api/reports/overview', authenticate, reportsController.getReportsOverview)
+
+  // Team management (partner only)
+  app.use('/api/team', teamRouter)
+
+  // Blog management
+  app.get('/api/blog', authenticate, blogController.listBlogPosts)
+  app.post('/api/blog', authenticate, blogController.createBlogPost)
+  app.get('/api/blog/:id', authenticate, blogController.getBlogPost)
+  app.patch('/api/blog/:id', authenticate, blogController.updateBlogPost)
+  app.delete('/api/blog/:id', authenticate, blogController.deleteBlogPost)
 }

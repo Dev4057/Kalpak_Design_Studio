@@ -2,24 +2,24 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
-import { useProjects } from '@/hooks/useProjects'
-import { useLeads } from '@/hooks/useLeads'
+import { useDashboard } from '@/hooks/useDashboard'
 import { PageHeader } from '@/components/shared/PageHeader'
 import { StatsCard } from '@/components/dashboard/StatsCard'
-import { RecentActivityFeed } from '@/components/dashboard/RecentActivityFeed'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
 import {
   FolderOpen,
   Users,
   HardHat,
   CreditCard,
   Clock,
+  AlertTriangle,
 } from 'lucide-react'
-import Link from 'next/link'
 import { formatDistanceToNow } from 'date-fns'
-import { formatPhone } from '@kalpak/shared'
+import { formatPhone, formatCurrency } from '@kalpak/shared'
 
 const STATUS_COLORS: Record<string, string> = {
   lead: 'bg-gray-400',
@@ -42,6 +42,7 @@ const STATUS_LABELS: Record<string, string> = {
 export default function DashboardPage() {
   const { role, isLoading: authLoading } = useAuth()
   const router = useRouter()
+  const { data, isLoading } = useDashboard()
 
   useEffect(() => {
     if (!authLoading && role === 'employee') {
@@ -49,30 +50,9 @@ export default function DashboardPage() {
     }
   }, [role, authLoading, router])
 
-  const { data: projectsData, isLoading: projectsLoading } = useProjects()
-  const { data: leadsData, isLoading: leadsLoading } = useLeads()
-
-  const projects = projectsData?.data ?? []
-  const leads = leadsData?.data ?? []
-
-  const activeProjects = projects.filter((p) =>
-    ['confirmed', 'in_progress', 'snagging'].includes(p.status)
-  ).length
-
-  const thisMonth = new Date()
-  thisMonth.setDate(1)
-  const newLeadsThisMonth = leads.filter(
-    (l) => new Date(l.created_at) >= thisMonth
-  ).length
-
-  const statusCounts: Record<string, number> = {}
-  projects.forEach((p) => {
-    statusCounts[p.status] = (statusCounts[p.status] ?? 0) + 1
-  })
-
-  const recentLeads = leads.slice(0, 5)
-
   if (authLoading || role === 'employee') return null
+
+  const dashboard = data?.data
 
   return (
     <div>
@@ -80,7 +60,7 @@ export default function DashboardPage() {
 
       {/* Stats row */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {projectsLoading ? (
+        {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-24 rounded-lg" />
           ))
@@ -88,30 +68,58 @@ export default function DashboardPage() {
           <>
             <StatsCard
               title="Active Projects"
-              value={activeProjects}
+              value={dashboard?.stats.active_projects ?? 0}
               icon={FolderOpen}
               subtitle="Confirmed + In Progress + Snagging"
             />
             <StatsCard
               title="New Leads This Month"
-              value={newLeadsThisMonth}
+              value={dashboard?.stats.new_leads_this_month ?? 0}
               icon={Users}
             />
             <StatsCard
               title="Workers on Site"
-              value="—"
+              value={dashboard?.stats.workers_on_site ?? 0}
               icon={HardHat}
               subtitle="Across active projects"
             />
             <StatsCard
-              title="Pending Payments"
-              value="—"
+              title="Spent This Month"
+              value={dashboard ? formatCurrency(dashboard.stats.total_spent_this_month) : '—'}
               icon={CreditCard}
-              subtitle="Coming in Phase 4"
             />
           </>
         )}
       </div>
+
+      {/* Budget Alerts */}
+      {!isLoading && dashboard && dashboard.budget_alerts.length > 0 && (
+        <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <p className="text-sm font-medium text-amber-800">
+              Budget Alert: {dashboard.budget_alerts.length} project{dashboard.budget_alerts.length > 1 ? 's are' : ' is'} above 85% budget utilisation
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            {dashboard.budget_alerts.map((alert) => (
+              <Link
+                key={alert.project_id}
+                href={`/projects/${alert.project_id}/financials`}
+                className="flex items-center justify-between p-2 rounded bg-white hover:bg-amber-50 border border-amber-100 transition-colors"
+              >
+                <span className="text-sm font-medium text-text-primary">{alert.project_name}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-text-secondary">Remaining: {formatCurrency(alert.remaining_budget)}</span>
+                  <Badge className={`text-xs ${alert.utilization_percent >= 90 ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-700'}`}>
+                    {alert.utilization_percent}% used
+                  </Badge>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Project Status Overview */}
@@ -120,7 +128,7 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">Project Status</CardTitle>
           </CardHeader>
           <CardContent>
-            {projectsLoading ? (
+            {isLoading ? (
               <div className="space-y-2">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Skeleton key={i} className="h-8 rounded" />
@@ -129,7 +137,7 @@ export default function DashboardPage() {
             ) : (
               <div className="space-y-2">
                 {Object.entries(STATUS_LABELS).map(([status, label]) => {
-                  const count = statusCounts[status] ?? 0
+                  const count = dashboard?.project_status_breakdown.find((s) => s.status === status)?.count ?? 0
                   return (
                     <Link
                       key={status}
@@ -137,12 +145,8 @@ export default function DashboardPage() {
                       className="flex items-center justify-between p-2 rounded hover:bg-muted/50 transition-colors group"
                     >
                       <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${STATUS_COLORS[status]}`}
-                        />
-                        <span className="text-sm text-text-secondary group-hover:text-text-primary">
-                          {label}
-                        </span>
+                        <span className={`w-2 h-2 rounded-full ${STATUS_COLORS[status]}`} />
+                        <span className="text-sm text-text-secondary group-hover:text-text-primary">{label}</span>
                       </div>
                       <span className="text-sm font-medium text-text-primary">{count}</span>
                     </Link>
@@ -159,7 +163,34 @@ export default function DashboardPage() {
             <CardTitle className="text-sm font-medium">Recent Site Activity</CardTitle>
           </CardHeader>
           <CardContent>
-            <RecentActivityFeed />
+            {isLoading ? (
+              <div className="space-y-3">
+                {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-14 rounded" />)}
+              </div>
+            ) : !dashboard || dashboard.recent_activity.length === 0 ? (
+              <p className="text-sm text-text-secondary text-center py-6">No site updates yet</p>
+            ) : (
+              <div className="space-y-3">
+                {dashboard.recent_activity.map((update) => (
+                  <div key={update.id} className="flex gap-3">
+                    <div className="mt-1 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        <Link href={`/projects/${update.project_id}/updates`} className="text-xs font-medium text-primary hover:underline">
+                          {update.project_name}
+                        </Link>
+                        <span className="text-xs text-text-secondary">by {update.posted_by_name}</span>
+                      </div>
+                      <p className="text-sm text-text-secondary truncate mt-0.5">{update.update_text}</p>
+                    </div>
+                    <span className="text-xs text-text-secondary shrink-0 flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {formatDistanceToNow(new Date(update.created_at), { addSuffix: true })}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -175,17 +206,17 @@ export default function DashboardPage() {
           </div>
         </CardHeader>
         <CardContent>
-          {leadsLoading ? (
+          {isLoading ? (
             <div className="space-y-2">
               {Array.from({ length: 3 }).map((_, i) => (
                 <Skeleton key={i} className="h-12 rounded" />
               ))}
             </div>
-          ) : recentLeads.length === 0 ? (
+          ) : !dashboard || dashboard.new_leads.length === 0 ? (
             <p className="text-sm text-text-secondary text-center py-4">No leads yet</p>
           ) : (
             <div className="space-y-1">
-              {recentLeads.map((lead) => (
+              {dashboard.new_leads.map((lead) => (
                 <div
                   key={lead.id}
                   className="flex items-center justify-between p-2 rounded-md hover:bg-muted/50"

@@ -12,6 +12,6 @@ router.get('/workers', paymentsController.listWorkerPayments)
 router.post('/workers', validate(CreateWorkerPaymentSchema), paymentsController.createWorkerPayment)
 router.get('/vendors', paymentsController.listVendorPayments)
 router.post('/vendors', validate(CreateVendorPaymentSchema), paymentsController.createVendorPayment)
-router.get('/summary', paymentsController.getPaymentSummary)
+router.get('/summary', paymentsController.getFinancialSummary)
 
 export default router

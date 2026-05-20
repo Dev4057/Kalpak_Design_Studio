@@ -12,6 +12,7 @@ const TABS = [
   { label: 'Workers', href: '/workers' },
   { label: 'Updates', href: '/updates' },
   { label: 'Documents', href: '/documents' },
+  { label: 'Financials', href: '/financials' },
 ]
 
 export default function ProjectDetailLayout({ children }: { children: React.ReactNode }) {

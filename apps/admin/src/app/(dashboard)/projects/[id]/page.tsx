@@ -230,6 +230,37 @@ export default function ProjectOverviewPage() {
             </CardContent>
           </Card>
         )}
+
+        {/* Publish to website */}
+        <RoleGuard allowedRoles={['partner']}>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium">Public Website</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 accent-primary"
+                  checked={project.is_published}
+                  onChange={async (e) => {
+                    await updateProject.mutateAsync({ is_published: e.target.checked })
+                  }}
+                />
+                <div>
+                  <p className="text-sm font-medium">
+                    {project.is_published ? 'Published on website' : 'Not published'}
+                  </p>
+                  <p className="text-xs text-text-secondary">
+                    {project.is_published
+                      ? 'Visible on /portfolio'
+                      : 'Toggle to show on public portfolio'}
+                  </p>
+                </div>
+              </label>
+            </CardContent>
+          </Card>
+        </RoleGuard>
       </div>
 
       <AssignUserDialog

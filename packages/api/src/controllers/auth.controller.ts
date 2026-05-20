@@ -79,7 +79,7 @@ export async function me(req: Request, res: Response, next: NextFunction): Promi
   }
 }
 
-export async function listProfiles(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function listProfiles(_req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { data, error } = await supabaseAdmin
       .from('profiles')

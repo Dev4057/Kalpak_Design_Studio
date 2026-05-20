@@ -47,4 +47,21 @@ export const queryKeys = {
     all: ['profiles'] as const,
   },
   dashboard: ['dashboard'] as const,
+  financials: {
+    summary: (projectId: string) => ['financials', 'summary', projectId] as const,
+    workerPayments: (projectId: string, filters?: object) => ['financials', 'worker-payments', projectId, filters] as const,
+    vendorPayments: (projectId: string, filters?: object) => ['financials', 'vendor-payments', projectId, filters] as const,
+  },
+  reports: {
+    overview: ['reports', 'overview'] as const,
+  },
+  blog: {
+    all: ['blog'] as const,
+    list: () => ['blog', 'list'] as const,
+    detail: (id: string) => ['blog', 'detail', id] as const,
+  },
+  team: {
+    all: ['team'] as const,
+    list: () => ['team', 'list'] as const,
+  },
 }

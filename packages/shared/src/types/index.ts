@@ -165,6 +165,9 @@ export interface WorkerPayment {
   paid_by: string | null
   description: string | null
   created_at: string
+  // joined fields (present when fetched with relations)
+  worker?: Pick<Worker, 'full_name' | 'trade'>
+  paid_by_profile?: Pick<Profile, 'full_name'>
 }
 
 export interface VendorPayment {
@@ -178,6 +181,45 @@ export interface VendorPayment {
   paid_by: string | null
   bill_photo_url: string | null
   created_at: string
+  paid_by_profile?: Pick<Profile, 'full_name'>
+}
+
+export interface ProjectFinancialSummary {
+  total_budget: number | null
+  total_worker_payments: number
+  total_vendor_payments: number
+  total_spent: number
+  remaining_budget: number | null
+  budget_utilization_percent: number | null
+  worker_payment_count: number
+  vendor_payment_count: number
+  payment_by_mode: Record<PaymentMode, number>
+}
+
+export interface WorkerPaymentSummary {
+  worker_id: string
+  worker_name: string
+  trade: WorkerTrade
+  total_paid: number
+  payment_count: number
+  last_payment_date: string | null
+}
+
+export interface BlogPost {
+  id: string
+  title: string
+  slug: string
+  excerpt: string
+  content: string
+  cover_image_url: string | null
+  tags: string[]
+  author_id: string | null
+  is_published: boolean
+  published_at: string | null
+  reading_time_minutes: number | null
+  created_at: string
+  updated_at: string
+  author?: Pick<Profile, 'full_name'>
 }
 
 export interface ProjectDocument {
@@ -204,6 +246,16 @@ export interface Lead {
   status: LeadFormStatus
   converted_to_client_id: string | null
   created_at: string
+}
+
+export interface TeamMember {
+  id: string
+  full_name: string
+  email: string
+  phone: string | null
+  is_active: boolean
+  created_at: string
+  active_project_count: number
 }
 
 // API response envelope
