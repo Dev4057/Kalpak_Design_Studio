@@ -11,13 +11,11 @@ type ProjectRow = {
   project_type: string
 }
 
-const PLACEHOLDER_IMAGES = [
-  'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=800&q=80',
-  'https://images.unsplash.com/photo-1631679706909-1844bbd07221?w=800&q=80',
-  'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80',
-  'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
-  'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&q=80',
-  'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80',
+const SITE_PHOTOS = [
+  '/site1.png',
+  '/site2.png',
+  '/site3.png',
+  '/site4.png',
 ]
 
 export default async function FeaturedProjects() {
@@ -48,11 +46,19 @@ export default async function FeaturedProjects() {
 
         {projects.length === 0 ? (
           <div className="columns-1 sm:columns-2 lg:columns-3 gap-4 space-y-4">
-            {PLACEHOLDER_IMAGES.map((_, i) => (
+            {SITE_PHOTOS.map((src, i) => (
               <div
                 key={i}
-                className={`break-inside-avoid animate-pulse bg-stone-light/30 rounded ${i % 3 === 0 ? 'aspect-[3/4]' : i % 3 === 1 ? 'aspect-square' : 'aspect-[4/3]'}`}
-              />
+                className={`break-inside-avoid relative overflow-hidden ${i % 3 === 0 ? 'aspect-[3/4]' : i % 3 === 1 ? 'aspect-square' : 'aspect-[4/3]'}`}
+              >
+                <Image
+                  src={src}
+                  alt={`Kalpak Design Studio project ${i + 1}`}
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover"
+                />
+              </div>
             ))}
           </div>
         ) : (
@@ -65,7 +71,7 @@ export default async function FeaturedProjects() {
               >
                 <div className={`relative ${i % 3 === 0 ? 'aspect-[3/4]' : i % 3 === 1 ? 'aspect-square' : 'aspect-[4/3]'}`}>
                   <Image
-                    src={PLACEHOLDER_IMAGES[i % PLACEHOLDER_IMAGES.length]}
+                    src={SITE_PHOTOS[i % SITE_PHOTOS.length]}
                     alt={project.name}
                     fill
                     sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

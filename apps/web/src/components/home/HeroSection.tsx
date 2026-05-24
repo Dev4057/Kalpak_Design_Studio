@@ -32,7 +32,7 @@ export default function HeroSection() {
           initial={shouldReduce ? {} : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="block font-body text-xs tracking-widest uppercase text-stone-light/80 mb-6"
+          className="block font-body  text-xs tracking-widest uppercase text-white mb-6"
         >
           Luxury Interior Design
         </motion.span>
@@ -50,9 +50,10 @@ export default function HeroSection() {
           initial={shouldReduce ? {} : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
-          className="font-body text-lg text-stone-light/80 mb-10 max-w-xl mx-auto leading-relaxed"
+          className="font-heading font-bold italic text-xl md:text-2xl font-light text-white/90 mb-10 max-w-xl mx-auto leading-relaxed tracking-wide"
         >
-          Creating interiors that are beautiful, functional, and uniquely yours.
+          Creating interiors that are beautiful, functional, and{' '}
+          <span className="text-white font-bold not-italic">uniquely yours.</span>
         </motion.p>
 
         <motion.div

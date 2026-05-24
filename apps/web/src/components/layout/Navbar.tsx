@@ -148,7 +148,7 @@ export default function Navbar() {
           <Link
             href="/contact"
             className={cn(
-              'hidden md:inline-flex items-center px-5 py-2 text-xs tracking-widest uppercase font-body border transition-all duration-200',
+              'hidden md:inline-flex items-center px-2 py-2 text-xs tracking-widest uppercase font-body border transition-all duration-200',
               transparent
                 ? 'border-white text-white hover:bg-white hover:text-charcoal'
                 : 'border-gold text-charcoal hover:bg-gold hover:text-white',

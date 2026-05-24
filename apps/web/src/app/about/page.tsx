@@ -12,24 +12,21 @@ export const metadata: Metadata = {
 
 const PARTNERS = [
   {
-    initials: 'KR',
-    name: 'Kalpak Rathi',
-    title: 'Founding Partner & Principal Designer',
-    bio: 'With over 15 years of experience in luxury residential and commercial design, Kalpak leads the studio with a deep commitment to craft and client service.',
+    image: '/sachin_prabhune.png',
+    name: 'Sachin Prabhune',
+    title: 'Director',
+    bio: 'A seasoned design and project management professional with 20 years of experience in building design, architecture, and interior project execution. Skilled in handling residential and commercial developments, client relations, financial planning, site management, and end-to-end project delivery. Has delivered 50+ residential and 30+ commercial projects with a strong focus on design excellence, functionality, and seamless execution.',
   },
   {
-    initials: 'AR',
-    name: 'Ananya Rathi',
-    title: 'Partner & Head of Architecture',
-    bio: "An architect with a Master's from the School of Planning and Architecture, Ananya brings structural rigour and spatial sensitivity to every project.",
+    image: '/tanaya_gandhi.png',
+    name: 'Tanaya Gandhi',
+    title: 'Senior Project Head | Interior Designer',
+    bio: 'A dedicated and detail-oriented Interior Designer with 7 years of professional experience. Expert in end-to-end project workflows — design coordination, space planning, material selection, site supervision, and execution management. Passionate about creating thoughtfully designed environments that balance creativity, practicality, and attention to detail while ensuring every project reflects professionalism, innovation, and seamless execution.',
   },
 ]
 
 const TEAM = [
-  { initials: 'VM', name: 'Varun Mehta', role: 'Senior Interior Designer' },
-  { initials: 'PS', name: 'Priyanka Sharma', role: 'Project Manager' },
-  { initials: 'RS', name: 'Rohan Singh', role: 'Visualisation Specialist' },
-  { initials: 'NP', name: 'Neha Patel', role: 'Materials & Procurement' },
+  { image: '/pranali_%20bahirat.png', name: 'Pranali Bahirat', role: 'Interior Designer' },
 ]
 
 const VALUES = [
@@ -133,8 +130,14 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {PARTNERS.map((partner) => (
               <div key={partner.name} className="flex gap-6 p-8 bg-cream border border-stone-light/30">
-                <div className="w-20 h-20 shrink-0 rounded-full bg-stone-light/30 flex items-center justify-center">
-                  <span className="font-heading text-2xl font-light text-stone">{partner.initials}</span>
+                <div className="relative w-24 h-24 shrink-0 rounded-full overflow-hidden">
+                  <Image
+                    src={partner.image}
+                    alt={partner.name}
+                    fill
+                    sizes="96px"
+                    className="object-cover"
+                  />
                 </div>
                 <div>
                   <h3 className="font-heading text-2xl font-light text-charcoal tracking-wide mb-1">{partner.name}</h3>
@@ -157,8 +160,14 @@ export default function AboutPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {TEAM.map((member) => (
               <div key={member.name} className="text-center">
-                <div className="w-20 h-20 rounded-full bg-stone-light/30 flex items-center justify-center mx-auto mb-4">
-                  <span className="font-heading text-xl font-light text-stone">{member.initials}</span>
+                <div className="relative w-20 h-20 rounded-full overflow-hidden mx-auto mb-4">
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
                 </div>
                 <h4 className="font-heading text-lg font-light text-charcoal tracking-wide">{member.name}</h4>
                 <p className="font-body text-xs text-stone mt-1">{member.role}</p>
